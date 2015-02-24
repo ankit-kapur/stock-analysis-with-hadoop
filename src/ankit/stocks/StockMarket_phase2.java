@@ -77,7 +77,7 @@ public class StockMarket_phase2 {
 				/* Apply the volatility formula */
 				volatility = Math.sqrt((otherSum) / (N - 1));
 				
-				/* ----- Experimentation ----- */
+				/* ----- Increment the stock counter ----- */
 				context.getCounter(MainStockMarket.STOCK_COUNTER.NUM_OF_STOCKS).increment(1);
 				
 				/* Write the volatility value */

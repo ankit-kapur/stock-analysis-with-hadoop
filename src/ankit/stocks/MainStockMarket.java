@@ -51,7 +51,6 @@ public class MainStockMarket {
 		Counters counters = job2.getCounters();
 		Counter c1 = counters.findCounter(MainStockMarket.STOCK_COUNTER.NUM_OF_STOCKS);
 		long numOfStocks = c1.getValue();
-		System.out.println("Stockcounter ==> " + c1.getDisplayName()+" : "+c1.getValue());
 		
 		/* --- Job 3 configuration --- */
 	    Job job3 = Job.getInstance();
@@ -71,10 +70,10 @@ public class MainStockMarket {
 		status = job3.waitForCompletion(true);
 				
 		
-		/* Wait for completion of each job */
+		/* Record the time taken */
 		if (status == true) {
 			long end = new Date().getTime();
-			System.out.println("\nTime taken for job to complete: " + (end-startTime)/1000.0 + " seconds\n");
+			System.out.println("\nTime taken for all jobs to complete: " + (end-startTime)/1000.0 + " seconds\n");
 		}
 		System.out.println("\n -------=== Completed --> Stock volatility estimation ===------- \n");		
 	}
