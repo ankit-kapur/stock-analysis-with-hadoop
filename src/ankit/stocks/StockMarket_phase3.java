@@ -51,12 +51,12 @@ public class StockMarket_phase3 {
 			if (MainStockMarket.isNumeric(numOfStocksStr))
 				numOfStocks = Integer.parseInt(numOfStocksStr);
 			
-//			if (counter == 1)
-//				context.write(new Text("--== TOP "), new Text("10 ==--"));
-//			if (counter == 11) {
-//				context.write(new Text("   "), new Text("      "));
-//				context.write(new Text("--== LAST "), new Text("10 ==--"));
-//			}
+			if (counter == 1)
+				context.write(new Text("--== TOP "), new Text("10 ==--"));
+			if (counter == 11) {
+				context.write(new Text("   "), new Text("      "));
+				context.write(new Text("--== LAST "), new Text("10 ==--"));
+			}
 			
 			/* If it's in the top 10 or bottom 10, write it */
 			if (counter <= 10 || counter > numOfStocks-10)

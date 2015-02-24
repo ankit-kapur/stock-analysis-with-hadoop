@@ -31,7 +31,7 @@ public class MainStockMarket {
 		FileInputFormat.addInputPath(job1, new Path(args[0]));
 		FileOutputFormat.setOutputPath(job1, new Path("Intermediate1"));
 		/* No. of reducers */
-		job1.setNumReduceTasks(6);
+		job1.setNumReduceTasks(Integer.parseInt(args[2]));
 		status = job1.waitForCompletion(true);
 
 		/* --- Job 2 configuration --- */
@@ -45,7 +45,7 @@ public class MainStockMarket {
 		FileInputFormat.addInputPath(job2, new Path("Intermediate1"));
 		FileOutputFormat.setOutputPath(job2, new Path("Intermediate2"));
 		/* No. of reducers */
-		job2.setNumReduceTasks(6);
+		job2.setNumReduceTasks(Integer.parseInt(args[3]));
 		status = job2.waitForCompletion(true);
 		/* Get the value of the stock counter */
 		Counters counters = job2.getCounters();
