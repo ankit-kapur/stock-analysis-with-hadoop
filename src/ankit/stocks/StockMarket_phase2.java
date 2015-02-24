@@ -17,17 +17,18 @@ public class StockMarket_phase2 {
 
 		public void map(LongWritable key, Text value, Context context)
 				throws IOException, InterruptedException {
-			
+
 			String line = value.toString();
-			String keyString = "", valueString="";
-			
-			/* Value will be separated by a tab: 
-			   "ANTH-1-2014-12		3.342) */
+			String keyString = "", valueString = "";
+
+			/*
+			 * Value will be separated by a tab: "ANTH-1-2014-12 3.342)
+			 */
 			int tabSpaceIndex = line.indexOf('\t');
 			if (tabSpaceIndex > 0) {
-				keyString = line.substring(0,tabSpaceIndex);
-				valueString = line.substring(tabSpaceIndex+1);
-				
+				keyString = line.substring(0, tabSpaceIndex);
+				valueString = line.substring(tabSpaceIndex + 1);
+
 				/* --- Extract just the stockname, i.e. "ANTH-1" --- */
 				/* First remove the month */
 				keyString = keyString.substring(0, keyString.lastIndexOf('-'));
@@ -36,7 +37,7 @@ public class StockMarket_phase2 {
 			} else {
 				System.err.println("There was a problem in map2");
 			}
-			
+
 			/* The key is now just the stock-name */
 			key1.set(keyString);
 			/* We send the xi value as-is */
@@ -49,7 +50,7 @@ public class StockMarket_phase2 {
 
 		public void reduce(Text key, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
-			
+
 			/* What we get: (STOCK-NAME, xi values) */
 			int N = 0;
 			double xbar = 0, volatility = 0, xiSum = 0;
@@ -57,24 +58,31 @@ public class StockMarket_phase2 {
 			for (Text value : values) {
 				String xiString = value.toString();
 				double xi = Double.parseDouble(xiString);
-				
+
 				xiList.add(xi);
 				xiSum += xi;
 				N++;
 			}
-			
-			/* Calculate xbar */
-			xbar = xiSum/N;
-			
-			double otherSum = 0.0;
-			for (double xi : xiList) {
-				otherSum += Math.pow(xi-xbar, 2);
+
+			/* If N is 0 it means there's no stock data for this company */
+			if (N > 0) {
+				/* Calculate xbar */
+				xbar = xiSum / N;
+
+				double otherSum = 0.0;
+				for (double xi : xiList) {
+					otherSum += Math.pow(xi - xbar, 2);
+				}
+
+				/* Apply the volatility formula */
+				volatility = Math.sqrt((otherSum) / (N - 1));
+				
+				/* ----- Experimentation ----- */
+				context.getCounter(MainStockMarket.STOCK_COUNTER.NUM_OF_STOCKS).increment(1);
+				
+				/* Write the volatility value */
+				context.write(key, new Text(String.valueOf(volatility)));
 			}
-			
-			/* Apply the volatility formula */
-			volatility = Math.sqrt((otherSum)/(N-1));
-			
-			context.write(key, new Text(String.valueOf(volatility)));
 		}
 	}
 }
