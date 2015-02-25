@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -46,7 +47,7 @@ public class StockMarket_phase2 {
 		}
 	}
 
-	public static class Reduce2 extends Reducer<Text, Text, Text, Text> {
+	public static class Reduce2 extends Reducer<Text, Text, Text, DoubleWritable> {
 
 		public void reduce(Text key, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
@@ -75,13 +76,16 @@ public class StockMarket_phase2 {
 				}
 
 				/* Apply the volatility formula */
-				volatility = Math.sqrt((otherSum) / (N - 1));
+				if ((N-1) != 0)
+					volatility = Math.sqrt((otherSum) / (N - 1));
 				
-				/* ----- Increment the stock counter ----- */
-				context.getCounter(MainStockMarket.STOCK_COUNTER.NUM_OF_STOCKS).increment(1);
-				
-				/* Write the volatility value */
-				context.write(key, new Text(String.valueOf(volatility)));
+				if (volatility > 0) {
+					/* ----- Increment the stock counter ----- */
+					context.getCounter(MainStockMarket.STOCK_COUNTER.NUM_OF_STOCKS).increment(1);
+					
+					/* Write the volatility value */
+					context.write(key, new DoubleWritable(volatility));
+				}
 			}
 		}
 	}

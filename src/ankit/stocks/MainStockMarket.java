@@ -90,6 +90,18 @@ public class MainStockMarket {
 		return true;
 	}
 	
+	/* A utility function */
+	public static boolean isDouble(String string) {
+		if (string == null)
+			return false;
+		try {
+			Double.parseDouble(string);
+		} catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
+	}
+	
 	/* The counter for number of stocks */
 	public static enum STOCK_COUNTER {
 		  NUM_OF_STOCKS,
