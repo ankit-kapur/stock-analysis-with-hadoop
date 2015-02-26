@@ -18,8 +18,7 @@ public class StockMarket_phase1 {
 				throws IOException, InterruptedException {
 			String line = null;
 			/* --- Get the file name --- */
-			String fileName = ((FileSplit) context.getInputSplit()).getPath()
-					.getName();
+			String fileName = ((FileSplit) context.getInputSplit()).getPath().getName();
 
 			/* Remove the .csv from the file name */
 			if (fileName.indexOf(".csv") >= 0)
@@ -32,6 +31,9 @@ public class StockMarket_phase1 {
 				/* --- Get the date --- */
 				/* If this line is not a header, it won't contain a '-' */
 				if (line.indexOf('-') >= 0) {
+					
+					/* ############## TODO: Is split more efficient */
+					
 					String date = line.substring(0, line.indexOf(','));
 					String yearMonth = date.substring(0, date.lastIndexOf('-'));
 
@@ -66,6 +68,10 @@ public class StockMarket_phase1 {
 			for (Text value : values) {
 				/* Get the DAY of the month */
 				String line = value.toString();
+				
+				/* ############## TODO: Is split more efficient */
+				
+				
 				String date = line.substring(0, line.indexOf(','));
 				String dayOfTheMonth = date.substring(
 						date.lastIndexOf('-') + 1, date.length());

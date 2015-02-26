@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -35,7 +36,8 @@ public class StockMarket_phase3 {
 			}
 			
 			/* FLIP the key and value */
-			context.write(value1, key1);
+			if (MainStockMarket.isDouble(value1.toString()))
+				context.write(value1, key1);
 		}
 	}
 
@@ -68,14 +70,8 @@ public class StockMarket_phase3 {
 				}
 				
 				/* If it's in the top 10 or bottom 10, write it */
-				if (counter <= 10 || counter > numOfStocks-10) {
-					if (MainStockMarket.isDouble(key.toString())) {
-						double volatility = Double.parseDouble(key.toString());
-						DecimalFormat myFormatter = new DecimalFormat("0.0000000");
-						String volatilityFormatted = myFormatter.format(volatility);
-						context.write(new Text(stockName), new Text(volatilityFormatted));
-					}
-				}
+				if (counter <= 10 || counter > numOfStocks-10)
+						context.write(new Text(stockName), key);
 				counter++;
 			}
 		}

@@ -1,6 +1,7 @@
 package ankit.stocks;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,9 +23,7 @@ public class StockMarket_phase2 {
 			String line = value.toString();
 			String keyString = "", valueString = "";
 
-			/*
-			 * Value will be separated by a tab: "ANTH-1-2014-12 3.342)
-			 */
+			/* Value will be separated by a tab: "ANTH-1-2014-12 3.342)	 */
 			int tabSpaceIndex = line.indexOf('\t');
 			if (tabSpaceIndex > 0) {
 				keyString = line.substring(0, tabSpaceIndex);
@@ -47,7 +46,7 @@ public class StockMarket_phase2 {
 		}
 	}
 
-	public static class Reduce2 extends Reducer<Text, Text, Text, DoubleWritable> {
+	public static class Reduce2 extends Reducer<Text, Text, Text, Text> {
 
 		public void reduce(Text key, Iterable<Text> values, Context context)
 				throws IOException, InterruptedException {
@@ -83,8 +82,11 @@ public class StockMarket_phase2 {
 					/* ----- Increment the stock counter ----- */
 					context.getCounter(MainStockMarket.STOCK_COUNTER.NUM_OF_STOCKS).increment(1);
 					
+					DecimalFormat myFormatter = new DecimalFormat("0.000000000");
+					String volatilityFormatted = myFormatter.format(volatility);
+					
 					/* Write the volatility value */
-					context.write(key, new DoubleWritable(volatility));
+					context.write(key, new Text(volatilityFormatted));
 				}
 			}
 		}
